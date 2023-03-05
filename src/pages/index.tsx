@@ -1,10 +1,20 @@
+import { useEffect } from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
-import { Header } from "@/components/";
+import { Header, Hero } from "@/components/";
+import { API_REQUEST } from "@/services/api_service";
+import { GetServerSideProps } from "next";
+import { IMovie } from "@/interface/app.interface";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+export default function Home({ trending }: HomeProps): JSX.Element {
+  // useEffect(() => {
+  //   fetch(API_REQUEST.trending)
+  //     .then((res) => res.json())
+  //     .then((data) => console.log(data));
+  // }, []);
+
   return (
     <div className="relative h-[200vh]">
       <Head>
@@ -14,10 +24,23 @@ export default function Home() {
         <link rel="icon" href="/logo.svg" />
       </Head>
       <Header />
-      <main>
-        {/* Hero */}
+      <main className="relative pl-4 pb-24 lg:space-y-24 lg:pl-16">
+        <Hero trending={trending} />
         <section></section>
       </main>
     </div>
   );
+}
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+  const trending = await fetch(API_REQUEST.trending).then((res) => res.json());
+
+  return {
+    props: {
+      trending: trending.results,
+    },
+  };
+};
+interface HomeProps {
+  trending: IMovie[];
 }
