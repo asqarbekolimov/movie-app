@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
-import { Header, Hero } from "@/components/";
+import { Header, Hero, Row } from "@/components/";
 import { API_REQUEST } from "@/services/api_service";
 import { GetServerSideProps } from "next";
 import { IMovie } from "@/interface/app.interface";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home({ trending }: HomeProps): JSX.Element {
+export default function Home({ trending, topRated }: HomeProps): JSX.Element {
   // useEffect(() => {
   //   fetch(API_REQUEST.trending)
   //     .then((res) => res.json())
@@ -26,7 +26,9 @@ export default function Home({ trending }: HomeProps): JSX.Element {
       <Header />
       <main className="relative pl-4 pb-24 lg:space-y-24 lg:pl-16">
         <Hero trending={trending} />
-        <section></section>
+        <section>
+          <Row title="Top Rated" movies={topRated} />
+        </section>
       </main>
     </div>
   );
@@ -34,13 +36,16 @@ export default function Home({ trending }: HomeProps): JSX.Element {
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   const trending = await fetch(API_REQUEST.trending).then((res) => res.json());
+  const topRated = await fetch(API_REQUEST.top_rated).then((res) => res.json());
 
   return {
     props: {
       trending: trending.results,
+      topRated: topRated.results,
     },
   };
 };
 interface HomeProps {
   trending: IMovie[];
+  topRated: IMovie[];
 }
